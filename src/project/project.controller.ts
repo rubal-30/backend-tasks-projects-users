@@ -1,9 +1,10 @@
-import { Controller, Post, Get, Patch, Delete, Param, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, Req, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -19,26 +20,28 @@ export class ProjectController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all projects for logged-in user' })
-  findAll(@Req() req) {
-    return this.projectService.findAllByUser(req.user.userId);
+  @ApiOperation({ summary: 'List all projects for logged-in user with pagination' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  findAll(@Req() req, @Query() { page, limit }: PaginationDto) {
+    return this.projectService.findAllByUser(req.user.userId, { page, limit });
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get project details' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.projectService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update project' })
-  update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProjectDto) {
     return this.projectService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete project' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.projectService.remove(id);
   }
 }

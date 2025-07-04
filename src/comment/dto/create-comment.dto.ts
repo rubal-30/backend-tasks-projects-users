@@ -9,5 +9,5 @@ export class CreateCommentDto
 
   @ApiProperty()
   @IsNotEmpty()
-  taskId: string;
+  taskId: number;
 }

@@ -6,10 +6,8 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   create(data: any) {
-  console.log('CREATING USER WITH:', data); 
-  return this.prisma.user.create({ data });
-}
-
+    return this.prisma.user.create({ data });
+  }
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
@@ -21,7 +19,7 @@ export class UserService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: { id: true, name: true, email: true },
@@ -30,19 +28,19 @@ export class UserService {
     return user;
   }
 
-  async findUserTasks(id: string) {
+  async findUserTasks(id: number) {
     return this.prisma.task.findMany({
       where: { userId: id },
     });
   }
 
-  async findUserProjects(id: string) {
+  async findUserProjects(id: number) {
     return this.prisma.project.findMany({
       where: { userId: id },
     });
   }
 
-  async findUserComments(id: string) {
+  async findUserComments(id: number) {
     return this.prisma.comment.findMany({
       where: { userId: id },
     });

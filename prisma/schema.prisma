@@ -7,54 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TaskStatus 
-{
+enum TaskStatus {
   pending
   in_progress
   done
 }
 
-model User 
-{
-  id        String     @id @default(uuid())
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
   name      String
-  email     String     @unique
+  email     String    @unique
   password  String
+  role      Role      @default(user)
   tasks     Task[]
   projects  Project[]
   comments  Comment[]
 }
 
-model Task 
-{
-  id          String      @id @default(uuid())
+model Task {
+  id          Int        @id @default(autoincrement())
   title       String
   description String
-  status      TaskStatus  @default(pending)
-  user        User        @relation(fields: [userId], references: [id])
-  userId      String
-  project     Project?    @relation(fields: [projectId], references: [id])
-  projectId   String?
+  status      TaskStatus @default(pending)
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int
+  project     Project?   @relation(fields: [projectId], references: [id])
+  projectId   Int?
   comments    Comment[]
 }
 
-model Project 
-{
-  id          String   @id @default(uuid())
+model Project {
+  id          Int      @id @default(autoincrement())
   name        String
   description String
   user        User     @relation(fields: [userId], references: [id])
-  userId      String
+  userId      Int
   tasks       Task[]
 }
 
-model Comment 
-{
-  id        String   @id @default(uuid())
+model Comment {
+  id        Int      @id @default(autoincrement())
   content   String
   task      Task     @relation(fields: [taskId], references: [id])
-  taskId    String
+  taskId    Int
   user      User     @relation(fields: [userId], references: [id])
-  userId    String
+  userId    Int
   createdAt DateTime @default(now())
 }

@@ -7,7 +7,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  create(dto: CreateCommentDto, userId: string) {
+  create(dto: CreateCommentDto, userId: number) {
     return this.prisma.comment.create({
       data: {
         content: dto.content,
@@ -17,7 +17,7 @@ export class CommentService {
     });
   }
 
-  async update(id: string, dto: UpdateCommentDto, userId: string) {
+  async update(id: number, dto: UpdateCommentDto, userId: number) {
     const comment = await this.prisma.comment.findUnique({ where: { id } });
     if (!comment) throw new NotFoundException('Comment not found');
     if (comment.userId !== userId) throw new ForbiddenException('Not your comment');
@@ -28,7 +28,7 @@ export class CommentService {
     });
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: number, userId: number) {
     const comment = await this.prisma.comment.findUnique({ where: { id } });
     if (!comment) throw new NotFoundException('Comment not found');
 
