@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException ,Inject} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CACHE_MANAGER  } from '@nestjs/cache-manager'; // Corrected import
+import { CACHE_MANAGER  } from '@nestjs/cache-manager'; 
 import { Cache } from 'cache-manager';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -9,7 +9,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 export class TaskService {
   constructor(
     private prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache // Corrected injection
+    @Inject(CACHE_MANAGER) private cacheManager: Cache 
   ) {}
  
   create(dto: CreateTaskDto, userId: number) {
@@ -38,10 +38,10 @@ export class TaskService {
 
     const cacheKey = `tasks:${userId}:${page}:${limit}:${status}:${title}`;
     
-    // Try to get the tasks from cache
+    
     const cachedTasks = await this.cacheManager.get(cacheKey);
     if (cachedTasks) {
-      return cachedTasks; // Return from cache if available
+      return cachedTasks; 
     }
 
     const tasks = await this.prisma.task.findMany({
@@ -51,8 +51,8 @@ export class TaskService {
       orderBy: { id: 'asc' },
     });
 
-    // Cache the tasks with TTL of 10 minutes (600 seconds)
-    await this.cacheManager.set(cacheKey, tasks, 600); // Corrected TTL handling
+    
+    await this.cacheManager.set(cacheKey, tasks, 600);
 
     return tasks;
   }
